@@ -1,777 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>RhythmFlow | Spotify Edition</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PlayIt — Music Player</title>
+<meta name="description" content="PlayIt is a glassmorphism music player with a spinning vinyl turntable, playlist, favorites and full keyboard control." />
 
-        body {
-            font-family: 'Circular', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
-            background: #000000;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-        }
+<!-- Fonts: Sora (display) · Inter (body) · JetBrains Mono (data) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-        /* Main player container - Spotify dark card style */
-        .music-player {
-            max-width: 620px;
-            width: 100%;
-            background: #121212;
-            border-radius: 1.8rem;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
-            padding: 2rem 2rem 2.2rem;
-            transition: all 0.3s ease;
-        }
-
-        /* Header with Spotify-like gradient */
-        .player-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .player-header h1 {
-            font-size: 2.4rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-        .player-header p {
-            font-size: 0.95rem;
-            color: #b3b3b3;
-            margin-top: 0.5rem;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        /* Album art - Spotify card style with subtle glow */
-        .track-art {
-            display: flex;
-            justify-content: center;
-            margin: 0.8rem 0 1.5rem;
-        }
-        .art-circle {
-            width: 240px;
-            height: 240px;
-            background: linear-gradient(145deg, #282828, #181818);
-            border-radius: 50%;
-            box-shadow: 0 25px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease;
-        }
-        .art-circle:hover {
-            transform: scale(1.02);
-        }
-        .art-emoji {
-            font-size: 7rem;
-            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.4));
-        }
-
-        /* Track info - Spotify typography with extra large text */
-        .track-info {
-            text-align: center;
-            margin: 1.6rem 0 1.2rem;
-        }
-        .track-name {
-            font-size: 2.1rem;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.3px;
-        }
-        .artist-name {
-            font-size: 1.15rem;
-            color: #b3b3b3;
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        /* Progress bar - Spotify green theme */
-        .progress-container {
-            margin: 1.8rem 0 1.4rem;
-        }
-        .progress-time {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.95rem;
-            color: #b3b3b3;
-            margin-bottom: 0.6rem;
-            font-weight: 500;
-        }
-        .progress-bar-bg {
-            width: 100%;
-            height: 6px;
-            background: #3e3e3e;
-            border-radius: 6px;
-            cursor: pointer;
-            position: relative;
-            transition: height 0.1s;
-        }
-        .progress-bar-bg:hover {
-            height: 8px;
-        }
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: #1DB954;
-            border-radius: 6px;
-            position: relative;
-            transition: width 0.05s linear;
-        }
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            right: -7px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 14px;
-            height: 14px;
-            background: #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #1DB954;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .progress-bar-bg:hover .progress-fill::after {
-            opacity: 1;
-        }
-
-        /* Controls - Spotify player buttons (larger) */
-        .controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0 1.6rem;
-        }
-        .ctrl-btn {
-            background: transparent;
-            border: none;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            font-size: 1.9rem;
-            cursor: pointer;
-            color: #e0e0e0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s ease;
-        }
-        .ctrl-btn:hover {
-            transform: scale(1.05);
-            color: #ffffff;
-        }
-        .ctrl-btn:active {
-            transform: scale(0.96);
-        }
-        .play-btn {
-            background: #1DB954;
-            width: 76px;
-            height: 76px;
-            font-size: 2.5rem;
-            color: #000000;
-            box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
-        }
-        .play-btn:hover {
-            background: #1ed760;
-            transform: scale(1.04);
-            color: #000000;
-            box-shadow: 0 6px 14px rgba(30, 215, 96, 0.4);
-        }
-
-        /* Volume & Autoplay - Spotify style bars */
-        .volume-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1.2rem;
-            margin-top: 1.2rem;
-            flex-wrap: wrap;
-        }
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: #2a2a2a;
-            padding: 0.5rem 1.4rem;
-            border-radius: 48px;
-            flex: 2;
-        }
-        .volume-icon {
-            font-size: 1.3rem;
-            color: #b3b3b3;
-        }
-        .volume-slider {
-            flex: 1;
-            height: 5px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: #5e5e5e;
-            border-radius: 5px;
-            outline: none;
-        }
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            background: #1DB954;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 4px #1DB954;
-        }
-        .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-        .autoplay-badge {
-            background: #2a2a2a;
-            border-radius: 48px;
-            padding: 0.5rem 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .autoplay-badge:hover {
-            background: #3a3a3a;
-        }
-        .autoplay-badge span {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #e0e0e0;
-        }
-        .toggle-autoplay {
-            font-size: 1.3rem;
-        }
-
-        /* Playlist - Spotify queue style with larger text */
-        .playlist-section {
-            margin-top: 2.2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 1.4rem;
-        }
-        .playlist-title {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #b3b3b3;
-            margin-bottom: 1.2rem;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-        .playlist-items {
-            max-height: 280px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .playlist-items::-webkit-scrollbar {
-            width: 5px;
-        }
-        .playlist-items::-webkit-scrollbar-track {
-            background: #2a2a2a;
-            border-radius: 10px;
-        }
-        .playlist-items::-webkit-scrollbar-thumb {
-            background: #535353;
-            border-radius: 10px;
-        }
-        .playlist-items::-webkit-scrollbar-thumb:hover {
-            background: #1DB954;
-        }
-        .playlist-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.9rem 1rem;
-            margin-bottom: 0.5rem;
-            background: transparent;
-            border-radius: 0.9rem;
-            cursor: pointer;
-            transition: 0.15s;
-            border: none;
-        }
-        .playlist-item:hover {
-            background: #2a2a2a;
-        }
-        .playlist-item.active {
-            background: rgba(29, 185, 84, 0.12);
-            border-left: 3px solid #1DB954;
-        }
-        .playlist-item-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        .playlist-song {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: #ffffff;
-        }
-        .playlist-artist {
-            font-size: 0.85rem;
-            color: #9b9b9b;
-        }
-        .playing-icon {
-            font-size: 1.1rem;
-            color: #1DB954;
-        }
-        @media (max-width: 550px) {
-            .music-player {
-                padding: 1.4rem;
-            }
-            .ctrl-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.6rem;
-            }
-            .play-btn {
-                width: 66px;
-                height: 66px;
-                font-size: 2.1rem;
-            }
-            .track-name {
-                font-size: 1.8rem;
-            }
-            .artist-name {
-                font-size: 1rem;
-            }
-            .art-circle {
-                width: 190px;
-                height: 190px;
-            }
-            .art-emoji {
-                font-size: 5.5rem;
-            }
-            .playlist-song {
-                font-size: 0.95rem;
-            }
-            .player-header h1 {
-                font-size: 2rem;
-            }
-        }
-        @media (max-width: 420px) {
-            .music-player {
-                padding: 1.2rem;
-            }
-            .track-name {
-                font-size: 1.6rem;
-            }
-            .art-circle {
-                width: 160px;
-                height: 160px;
-            }
-            .art-emoji {
-                font-size: 4.8rem;
-            }
-        }
-        .footer-note {
-            font-size: 0.75rem;
-            text-align: center;
-            margin-top: 1.4rem;
-            color: #5e5e5e;
-            font-weight: 500;
-        }
-        /* Now playing bar animation */
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
-        .playing-icon.active-pulse {
-            animation: pulse 1s infinite;
-        }
-    </style>
+<link rel="stylesheet" href="style.css" />
 </head>
-<body>
-<div class="music-player">
-    <div class="player-header">
-        <h1>🎧 RhythmFlow</h1>
-        <p>SPOTIFY · IMMERSIVE AUDIO</p>
-    </div>
+<body data-theme="dark">
 
-    <!-- album art dynamic -->
-    <div class="track-art">
-        <div class="art-circle">
-            <div class="art-emoji" id="albumEmoji">🎵</div>
-        </div>
-    </div>
-
-    <div class="track-info">
-        <div class="track-name" id="trackName">Lost in Waves</div>
-        <div class="artist-name" id="artistName">Echo Valley</div>
-    </div>
-
-    <!-- progress bar -->
-    <div class="progress-container">
-        <div class="progress-time">
-            <span id="currentTime">0:00</span>
-            <span id="durationTime">0:00</span>
-        </div>
-        <div class="progress-bar-bg" id="progressBarBg">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-    </div>
-
-    <!-- main controls (Spotify style) -->
-    <div class="controls">
-        <button class="ctrl-btn" id="prevBtn" title="Previous">⏮</button>
-        <button class="ctrl-btn play-btn" id="playPauseBtn" title="Play/Pause">▶</button>
-        <button class="ctrl-btn" id="nextBtn" title="Next">⏭</button>
-    </div>
-
-    <!-- volume + autoplay -->
-    <div class="volume-row">
-        <div class="volume-control">
-            <span class="volume-icon">🔊</span>
-            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.7">
-        </div>
-        <div class="autoplay-badge" id="autoplayToggle">
-            <span>🔁 Autoplay</span>
-            <span class="toggle-autoplay" id="autoplayIndicator">⭘</span>
-        </div>
-    </div>
-
-    <!-- playlist (enhanced queue) -->
-    <div class="playlist-section">
-        <div class="playlist-title">
-            <span>📀 QUEUE · SPOTIFY PLAYLIST</span>
-            <span id="trackCounter">0/0</span>
-        </div>
-        <div class="playlist-items" id="playlistContainer">
-            <!-- dynamic playlist injected -->
-        </div>
-    </div>
-    <div class="footer-note">✨ Spotify vibe • Click any track • Seek & volume • Autoplay loop</div>
+<!-- ===== Loading animation ===== -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-disc"></div>
+  <p>PLAYIT…</p>
 </div>
 
-<script>
-    // ---------- PREMIUM PLAYLIST DATA (Spotify inspired tracks) ----------
-    const playlist = [
-        { id: 1, title: "Lost in Waves", artist: "Echo Valley", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", emoji: "🌊" },
-        { id: 2, title: "Midnight Drive", artist: "Neon Pulse", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", emoji: "🌙" },
-        { id: 3, title: "Golden Hour", artist: "Sola Rhythm", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", emoji: "☀️" },
-        { id: 4, title: "Electric Dreams", artist: "Cyber Wave", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3", emoji: "⚡" },
-        { id: 5, title: "Silent Breeze", artist: "Luna Bay", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3", emoji: "🍃" }
-    ];
+<div class="bg-glow" aria-hidden="true"></div>
 
-    // DOM elements
-    const audio = new Audio();
-    const playPauseBtn = document.getElementById("playPauseBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const progressFill = document.getElementById("progressFill");
-    const progressBarBg = document.getElementById("progressBarBg");
-    const currentTimeSpan = document.getElementById("currentTime");
-    const durationSpan = document.getElementById("durationTime");
-    const volumeSlider = document.getElementById("volumeSlider");
-    const trackNameEl = document.getElementById("trackName");
-    const artistNameEl = document.getElementById("artistName");
-    const albumEmoji = document.getElementById("albumEmoji");
-    const playlistContainer = document.getElementById("playlistContainer");
-    const trackCounterSpan = document.getElementById("trackCounter");
-    const autoplayToggleDiv = document.getElementById("autoplayToggle");
-    const autoplayIndicator = document.getElementById("autoplayIndicator");
+<!-- ===== Top bar ===== -->
+<header class="topbar">
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle light and dark mode" title="Toggle theme">
+    <svg class="icon sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></g></svg>
+    <svg class="icon moon" viewBox="0 0 24 24"><path d="M21 12.5A8.5 8.5 0 1 1 11.5 3a7 7 0 0 0 9.5 9.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+  </button>
+</header>
 
-    // player state
-    let currentTrackIndex = 0;
-    let isPlaying = false;
-    let autoplayEnabled = true;
+<main class="layout">
 
-    // Helper: load track by index (Spotify smooth load)
-    function loadTrack(index) {
-        if (index < 0) index = 0;
-        if (index >= playlist.length) index = playlist.length - 1;
-        currentTrackIndex = index;
-        const track = playlist[currentTrackIndex];
-        audio.src = track.src;
-        audio.load();
-        // update UI info
-        trackNameEl.textContent = track.title;
-        artistNameEl.textContent = track.artist;
-        albumEmoji.textContent = track.emoji || "🎵";
-        // reset progress bar and times
-        progressFill.style.width = "0%";
-        currentTimeSpan.textContent = "0:00";
-        durationSpan.textContent = "0:00";
-        // update playlist active highlight & counter
-        renderPlaylist();
-        // if autoplay flag and playing state, resume after load (for next/prev auto)
-        if (autoplayEnabled && isPlaying) {
-            audio.play().catch(e => console.log("interaction needed"));
-        } else if (!autoplayEnabled && isPlaying) {
-            isPlaying = false;
-            playPauseBtn.textContent = "▶";
-            audio.pause();
-        }
-    }
+  <!-- ===== Player column ===== -->
+  <section class="player-card" aria-label="Now playing">
 
-    function formatTime(seconds) {
-        if (isNaN(seconds) || seconds === Infinity) return "0:00";
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    }
+    <!-- Turntable -->
+    <div class="turntable">
+      <div class="platter">
+        <div class="vinyl" id="vinyl">
+          <img id="albumArt" src="" alt="Album cover" />
+          <div class="vinyl-grooves"></div>
+          <div class="vinyl-hole"></div>
+        </div>
+      </div>
+      <div class="tonearm" id="tonearm">
+        <div class="tonearm-base"></div>
+        <div class="tonearm-rod"></div>
+        <div class="tonearm-head"></div>
+      </div>
+    </div>
 
-    function updateProgress() {
-        if (audio.duration && !isNaN(audio.duration)) {
-            const percent = (audio.currentTime / audio.duration) * 100;
-            progressFill.style.width = `${percent}%`;
-            currentTimeSpan.textContent = formatTime(audio.currentTime);
-        } else {
-            currentTimeSpan.textContent = formatTime(audio.currentTime);
-        }
-    }
+    <!-- Track info -->
+    <div class="track-info">
+      <h1 id="songTitle">—</h1>
+      <p id="songArtist">—</p>
+    </div>
 
-    function updateDuration() {
-        if (audio.duration && !isNaN(audio.duration)) {
-            durationSpan.textContent = formatTime(audio.duration);
-        }
-    }
+    <!-- Progress -->
+    <div class="progress-row">
+      <span class="time" id="currentTime">0:00</span>
+      <input type="range" id="seekBar" class="seek-bar" min="0" max="100" value="0" step="0.1" aria-label="Seek" />
+      <span class="time" id="durationTime">0:00</span>
+    </div>
 
-    function seek(e) {
-        const rect = progressBarBg.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        let percent = clickX / rect.width;
-        if (percent < 0) percent = 0;
-        if (percent > 1) percent = 1;
-        if (audio.duration && !isNaN(audio.duration)) {
-            audio.currentTime = percent * audio.duration;
-        }
-    }
+    <!-- Transport controls -->
+    <div class="controls">
+      <button class="ctrl-btn" id="shuffleBtn" type="button" aria-label="Shuffle" title="Shuffle (S)">
+        <svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M4 4l5 5M9 15l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="ctrl-btn" id="prevBtn" type="button" aria-label="Previous track" title="Previous (←)">
+        <svg viewBox="0 0 24 24"><path d="M19 20L9 12l10-8v16ZM5 19V5" fill="currentColor"/></svg>
+      </button>
+      <button class="ctrl-btn play-btn" id="playBtn" type="button" aria-label="Play" title="Play / Pause (Space)">
+        <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l12-7z" fill="currentColor"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" hidden><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>
+      </button>
+      <button class="ctrl-btn" id="nextBtn" type="button" aria-label="Next track" title="Next (→)">
+        <svg viewBox="0 0 24 24"><path d="M5 4l10 8-10 8V4ZM19 5v14" fill="currentColor"/></svg>
+      </button>
+      <button class="ctrl-btn" id="repeatBtn" type="button" aria-label="Repeat" title="Repeat (R)">
+        <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 12V8a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 12v4a4 4 0 0 1-4 4H3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="repeat-one-dot" id="repeatOneDot" hidden>1</span>
+      </button>
+    </div>
 
-    function togglePlayPause() {
-        if (isPlaying) {
-            audio.pause();
-            isPlaying = false;
-            playPauseBtn.textContent = "▶";
-            renderPlaylist();
-        } else {
-            audio.play().then(() => {
-                isPlaying = true;
-                playPauseBtn.textContent = "⏸";
-                renderPlaylist();
-            }).catch(err => {
-                console.warn("Playback requires user interaction");
-                isPlaying = false;
-                playPauseBtn.textContent = "▶";
-                renderPlaylist();
-            });
-        }
-    }
+    <!-- Volume + favorite -->
+    <div class="lower-row">
+      <button class="fav-btn" id="favBtn" type="button" aria-label="Add to favorites" title="Favorite (L)">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.9-10.2-9.3C.2 8.6 1.6 5 5.1 5c2 0 3.4 1.1 4.1 2.2C9.9 6.1 11.3 5 13.3 5c3.5 0 4.9 3.6 3.3 6.7C19 16.1 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="volume-row">
+        <svg viewBox="0 0 24 24" class="icon vol-icon"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="currentColor"/></svg>
+        <input type="range" id="volumeBar" class="volume-bar" min="0" max="100" value="80" aria-label="Volume" />
+      </div>
+    </div>
+  </section>
 
-    function nextTrack() {
-        if (playlist.length === 0) return;
-        let newIndex = currentTrackIndex + 1;
-        if (newIndex >= playlist.length) {
-            if (autoplayEnabled) {
-                newIndex = 0;
-            } else {
-                if (currentTrackIndex === playlist.length - 1) {
-                    if (isPlaying) togglePlayPause();
-                    return;
-                } else {
-                    newIndex = currentTrackIndex + 1;
-                }
-            }
-        }
-        currentTrackIndex = newIndex;
-        loadTrack(currentTrackIndex);
-        if (autoplayEnabled) {
-            audio.play().then(() => {
-                isPlaying = true;
-                playPauseBtn.textContent = "⏸";
-                renderPlaylist();
-            }).catch(() => {
-                isPlaying = false;
-                playPauseBtn.textContent = "▶";
-                renderPlaylist();
-            });
-        } else {
-            if (isPlaying) {
-                isPlaying = false;
-                playPauseBtn.textContent = "▶";
-                audio.pause();
-            }
-            renderPlaylist();
-        }
-    }
+  <!-- ===== Playlist column ===== -->
+  <section class="playlist-card" aria-label="Playlist">
+    <div class="playlist-head">
+      <h2>Playlist</h2>
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" class="icon"><path d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Search songs or artists…" autocomplete="off" />
+      </div>
+    </div>
+    <div class="playlist-tabs">
+      <button class="tab active" data-tab="all" type="button">All Songs</button>
+      <button class="tab" data-tab="favorites" type="button">Favorites</button>
+    </div>
+    <ul class="track-list" id="trackList"></ul>
+  </section>
+</main>
 
-    function prevTrack() {
-        let newIndex = currentTrackIndex - 1;
-        if (newIndex < 0) {
-            if (autoplayEnabled) {
-                newIndex = playlist.length - 1;
-            } else {
-                newIndex = 0;
-            }
-        }
-        currentTrackIndex = newIndex;
-        loadTrack(currentTrackIndex);
-        if (autoplayEnabled) {
-            audio.play().then(() => {
-                isPlaying = true;
-                playPauseBtn.textContent = "⏸";
-                renderPlaylist();
-            }).catch(() => {
-                isPlaying = false;
-                playPauseBtn.textContent = "▶";
-                renderPlaylist();
-            });
-        } else {
-            if (isPlaying) {
-                isPlaying = false;
-                playPauseBtn.textContent = "▶";
-                audio.pause();
-            }
-            renderPlaylist();
-        }
-    }
+<!-- toast for favorites / playback feedback -->
+<div class="toast" id="toast"></div>
 
-    function setVolume(value) {
-        audio.volume = value;
-        volumeSlider.value = value;
-    }
+<audio id="audio" preload="metadata"></audio>
 
-    function renderPlaylist() {
-        if (!playlistContainer) return;
-        let html = "";
-        playlist.forEach((track, idx) => {
-            const isActive = (idx === currentTrackIndex);
-            let playingMark = "";
-            if (isActive && isPlaying) {
-                playingMark = "🔊";
-            } else if (isActive && !isPlaying) {
-                playingMark = "⏸";
-            } else {
-                playingMark = "";
-            }
-            html += `
-                <div class="playlist-item ${isActive ? 'active' : ''}" data-index="${idx}">
-                    <div class="playlist-item-info">
-                        <div class="playlist-song">${escapeHtml(track.title)} ${track.emoji || ''}</div>
-                        <div class="playlist-artist">${escapeHtml(track.artist)}</div>
-                    </div>
-                    <div class="playing-icon">${playingMark}</div>
-                </div>
-            `;
-        });
-        playlistContainer.innerHTML = html;
-        trackCounterSpan.textContent = `${currentTrackIndex+1}/${playlist.length}`;
-        // attach click events for each playlist item
-        document.querySelectorAll(".playlist-item").forEach(item => {
-            item.addEventListener("click", (e) => {
-                const idx = parseInt(item.getAttribute("data-index"), 10);
-                if (!isNaN(idx)) {
-                    if (idx !== currentTrackIndex) {
-                        currentTrackIndex = idx;
-                        loadTrack(currentTrackIndex);
-                        if (autoplayEnabled) {
-                            audio.play().then(() => {
-                                isPlaying = true;
-                                playPauseBtn.textContent = "⏸";
-                                renderPlaylist();
-                            }).catch(() => {
-                                isPlaying = false;
-                                playPauseBtn.textContent = "▶";
-                                renderPlaylist();
-                            });
-                        } else {
-                            if (isPlaying) {
-                                isPlaying = false;
-                                playPauseBtn.textContent = "▶";
-                                audio.pause();
-                            }
-                            renderPlaylist();
-                        }
-                    } else {
-                        togglePlayPause();
-                    }
-                }
-            });
-        });
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    function toggleAutoplay() {
-        autoplayEnabled = !autoplayEnabled;
-        if (autoplayEnabled) {
-            autoplayIndicator.textContent = "🔁";
-            autoplayIndicator.style.opacity = "1";
-        } else {
-            autoplayIndicator.textContent = "⭘";
-        }
-    }
-
-    // Event listeners
-    playPauseBtn.addEventListener("click", togglePlayPause);
-    prevBtn.addEventListener("click", prevTrack);
-    nextBtn.addEventListener("click", nextTrack);
-    progressBarBg.addEventListener("click", seek);
-    volumeSlider.addEventListener("input", (e) => setVolume(e.target.value));
-    autoplayToggleDiv.addEventListener("click", toggleAutoplay);
-
-    // audio event handlers
-    audio.addEventListener("timeupdate", updateProgress);
-    audio.addEventListener("loadedmetadata", () => {
-        updateDuration();
-        if (audio.duration) progressFill.style.width = (audio.currentTime / audio.duration) * 100 + '%';
-    });
-    audio.addEventListener("ended", () => {
-        if (autoplayEnabled) {
-            nextTrack();
-        } else {
-            isPlaying = false;
-            playPauseBtn.textContent = "▶";
-            renderPlaylist();
-        }
-    });
-    audio.addEventListener("play", () => {
-        isPlaying = true;
-        playPauseBtn.textContent = "⏸";
-        renderPlaylist();
-    });
-    audio.addEventListener("pause", () => {
-        isPlaying = false;
-        playPauseBtn.textContent = "▶";
-        renderPlaylist();
-    });
-
-    // initialize player
-    function init() {
-        audio.volume = 0.7;
-        volumeSlider.value = "0.7";
-        autoplayEnabled = true;
-        autoplayIndicator.textContent = "🔁";
-        currentTrackIndex = 0;
-        loadTrack(0);
-        renderPlaylist();
-        isPlaying = false;
-        playPauseBtn.textContent = "▶";
-        audio.pause();
-        audio.preload = "metadata";
-    }
-    
-    init();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
